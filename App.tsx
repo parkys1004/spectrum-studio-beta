@@ -69,7 +69,8 @@ const App: React.FC = () => {
   } = useLibrary();
 
   // 2. Visualizer Settings State (Central Source of Truth)
-  const [visualizerMode, setVisualizerMode] = useState<VisualizerMode | null>(VisualizerMode.BARS);
+  // Default changed to DUAL_BARS
+  const [visualizerMode, setVisualizerMode] = useState<VisualizerMode | null>(VisualizerMode.DUAL_BARS);
   
   // Initialize from storage or use defaults
   const [visualizerSettings, setVisualizerSettings] = useState<VisualizerSettings>(() => {
