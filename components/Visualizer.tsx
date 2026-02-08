@@ -108,6 +108,10 @@ const Visualizer = forwardRef<HTMLCanvasElement, VisualizerProps>(({ isPlaying, 
       const height = canvas.height;
       const currentSettings = settingsRef.current;
       
+      // 1. Clear Canvas (Important for shake effect to not smear)
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(0, 0, width, height);
+
       effectRendererRef.current.resize(width, height);
 
       let dataArray: Uint8Array;
@@ -121,8 +125,9 @@ const Visualizer = forwardRef<HTMLCanvasElement, VisualizerProps>(({ isPlaying, 
 
       let bassEnergy = 0;
       if (mode !== VisualizerMode.WAVE && mode !== VisualizerMode.FLUID && mode !== VisualizerMode.JELLY_WAVE) {
-          for(let i=0; i<10; i++) bassEnergy += dataArray[i];
-          bassEnergy /= 10;
+          // Use 5 bins for more focused bass detection (similar to renderService)
+          for(let i=0; i<5; i++) bassEnergy += dataArray[i];
+          bassEnergy /= 5;
       } else {
           let sum = 0;
           // Approximate energy for waveform
@@ -130,7 +135,9 @@ const Visualizer = forwardRef<HTMLCanvasElement, VisualizerProps>(({ isPlaying, 
           bassEnergy = (sum / (bufferLength/10)) * 2; 
       }
       if (!isPlaying) bassEnergy = 0;
-      const isBeat = bassEnergy > 200; 
+      
+      // Lowered threshold for better responsiveness (was 200)
+      const isBeat = bassEnergy > 140; 
 
       if (isPlaying) {
           // Pass deltaTime in Seconds
@@ -138,10 +145,13 @@ const Visualizer = forwardRef<HTMLCanvasElement, VisualizerProps>(({ isPlaying, 
       }
 
       ctx.save();
+      
+      // Global Effects (Shake & Pulse)
       if (currentSettings.effects.shake && isBeat) {
           const strength = currentSettings.effectParams.shakeStrength || 1.0;
-          const shakeX = (Math.random() - 0.5) * 20 * strength;
-          const shakeY = (Math.random() - 0.5) * 20 * strength;
+          // Increased base shake amplitude from 20 to 30
+          const shakeX = (Math.random() - 0.5) * 30 * strength;
+          const shakeY = (Math.random() - 0.5) * 30 * strength;
           ctx.translate(shakeX, shakeY);
       }
       if (currentSettings.effects.pulse) {
@@ -172,7 +182,7 @@ const Visualizer = forwardRef<HTMLCanvasElement, VisualizerProps>(({ isPlaying, 
           ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
           ctx.fillRect(0, 0, width, height);
       } else {
-          // Keep canvas black for contrast
+          // Optional: Draw a dark grey background if no image, to make shake visible against black clear
           ctx.fillStyle = '#111111';
           ctx.fillRect(0, 0, width, height);
       }

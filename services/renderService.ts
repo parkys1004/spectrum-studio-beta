@@ -282,6 +282,9 @@ class RenderService {
     const analyser = offlineCtx.createAnalyser();
     analyser.fftSize = 2048;
     analyser.smoothingTimeConstant = visualizerSettings.sensitivity;
+    // MATCH AudioService Settings
+    analyser.minDecibels = -90;
+    analyser.maxDecibels = -10;
     
     offset = 0;
     validBuffers.forEach(buf => {
@@ -399,7 +402,8 @@ class RenderService {
                 for(let k=0; k<dataArray.length; k+=step) sum += Math.abs(dataArray[k] - 128);
                 bassEnergy = (sum / (dataArray.length/step)) * 2; 
             }
-            const isBeat = bassEnergy > 200;
+            // Lowered threshold to 130 to catch beats more reliably during offline render
+            const isBeat = bassEnergy > 130;
             
             const fixedDeltaTime = 1.0 / fps;
             effectRenderer.update(isBeat, bassEnergy, visualizerSettings.effectParams, fixedDeltaTime);
@@ -410,7 +414,8 @@ class RenderService {
             ctx.save();
             if (visualizerSettings.effects.shake && isBeat) {
                 const s = (visualizerSettings.effectParams.shakeStrength || 1) * scaleFactor;
-                ctx.translate((Math.random()-0.5)*20*s, (Math.random()-0.5)*20*s);
+                // Shake Logic
+                ctx.translate((Math.random()-0.5)*30*s, (Math.random()-0.5)*30*s);
             }
             if (visualizerSettings.effects.pulse) {
                  const zoom = 1.0 + (bassEnergy/255)*0.1;
@@ -429,6 +434,10 @@ class RenderService {
                  ctx.drawImage(bgBitmap, ox, oy, dw, dh);
                  ctx.fillStyle = 'rgba(0,0,0,0.3)';
                  ctx.fillRect(0,0,width,height);
+            } else {
+                // If no background, ensure black is cleared (done at top), but can draw fallback
+                ctx.fillStyle = '#111111';
+                ctx.fillRect(0, 0, width, height);
             }
 
             // Spectrum (Using Scaled Settings)
