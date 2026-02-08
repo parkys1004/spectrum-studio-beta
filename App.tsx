@@ -266,7 +266,8 @@ const App: React.FC = () => {
             </p>
             <p className="text-app-textMuted leading-relaxed">
                 정말 이 파일을 삭제하시겠습니까?<br/>
-                <span className="text-xs text-red-400 mt-2 block font-bold tracking-wide">이 작업은 되돌릴 수 없습니다.</span>
+                <span className="block my-2 font-semibold text-app-text text-sm">※ 원본 파일은 삭제되지 않습니다.</span>
+                <span className="text-xs text-red-400 mt-1 block font-bold tracking-wide">이 작업은 되돌릴 수 없습니다.</span>
             </p>
         </div>
       </Modal>
@@ -289,7 +290,8 @@ const App: React.FC = () => {
             <h3 className="text-xl font-bold text-app-text mb-3">모든 미디어를 삭제하시겠습니까?</h3>
             <p className="text-app-textMuted leading-relaxed text-sm">
                 등록된 모든 음악 파일이 라이브러리에서 제거됩니다.<br/>
-                저장된 파일 데이터도 함께 삭제되며, <span className="text-red-500 font-bold">이 작업은 되돌릴 수 없습니다.</span>
+                <span className="block my-2 font-semibold text-app-text">※ 원본 파일은 삭제되지 않습니다.</span>
+                앱 내 데이터만 삭제되며, <span className="text-red-500 font-bold">이 작업은 되돌릴 수 없습니다.</span>
             </p>
         </div>
       </Modal>
