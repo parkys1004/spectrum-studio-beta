@@ -1,5 +1,5 @@
 {
   "name": "Spectrum Studio 베타버전",
-  "description": "Adobe Premiere styled audio visualization and playlist manager with real-time spectrum analysis and audio effects.",
+  "description": "Adobe Premiere styled audio visualization and playlist manager with real-time spectrum analysis, audio effects, and a secure password lock screen.",
   "requestFramePermissions": []
 }
