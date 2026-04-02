@@ -6,6 +6,7 @@ import PlayerControls from './components/PlayerControls';
 import PresetPanel from './components/PresetPanel';
 import Modal from './components/Modal';
 import BentoBox from './components/layout/BentoBox';
+import PasswordLock from './components/PasswordLock';
 import { VisualizerMode, VisualizerSettings } from './types';
 
 // Custom Hooks
@@ -57,6 +58,11 @@ const DEFAULT_VISUALIZER_SETTINGS: VisualizerSettings = {
 };
 
 const App: React.FC = () => {
+  // Check access cookie
+  const [hasAccess] = useState(() => {
+    return document.cookie.includes('app_access=true');
+  });
+
   // 1. Library & Data State
   const { 
       tracks, 
@@ -176,6 +182,10 @@ const App: React.FC = () => {
           alert("클립보드 복사에 실패했습니다.");
       }
   };
+
+  if (!hasAccess) {
+    return <PasswordLock />;
+  }
 
   return (
     <div className="min-h-screen bg-app-bg text-app-text font-sans selection:bg-app-accent selection:text-white flex flex-col h-screen overflow-hidden">
