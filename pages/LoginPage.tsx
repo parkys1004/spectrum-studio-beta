@@ -60,8 +60,21 @@ export default function LoginPage() {
       } else {
         alert('서버에 비밀번호가 설정되지 않았습니다.');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("인증 실패:", error);
+      
+      // 오프라인 에러 발생 시 임시 비번으로 통과 (미리보기 환경용)
+      if (error?.message?.includes('offline') || isMockConfig) {
+        console.warn("⚠️ Firestore 연결 실패. 임시 비밀번호 '1234'를 사용합니다.");
+        if (password === '1234') {
+          sessionStorage.setItem('app_auth', 'true');
+          navigate('/', { replace: true });
+        } else {
+          alert("비밀번호가 틀렸습니다. (오프라인 모드: 1234)");
+        }
+        return;
+      }
+
       alert('인증 중 오류가 발생했습니다. (환경 변수 누락 등)');
     } finally {
       setIsChecking(false);
